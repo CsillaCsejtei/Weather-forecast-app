@@ -48,3 +48,27 @@ function formatDate(date) {
 
   return `${day} ${hours}:${minutes}`;
 }
+function showForecast() {
+  let days = ["Sun", "Mon", "Tue", "Wed", "Thu"];
+  let forecastHtml = "";
+  days.forEach(function (day) {
+    forecastHtml =
+      forecastHtml +
+      `       
+          <div class="tiempo-forecast-day">
+            <div class="tiempo-forecast-date">${day}</div>
+            <div class="tiempo-forecast-icon">🌤</div>
+            <div class="tiempo-forecast-temperatures">
+              <div class="tiempo-forecast-temperature">
+                <strong>18℃</strong>
+              </div>
+              <div class="tiempo-forecast-temperature">10℃</div>
+            </div>
+          </div>
+        `;
+  });
+  let forecasts = document.querySelector("#forecast");
+  forecasts.innerHTML = forecastHtml;
+}
+searchCity("London");
+showForecast();
