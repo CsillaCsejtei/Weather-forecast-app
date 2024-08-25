@@ -23,7 +23,7 @@ function updateWeather(response) {
   let originIcon = document.querySelector("#icon");
   originIcon.innerHTML = `<img src="${response.data.condition.icon_url}" class="weather-app-icon" />`;
   originTime.innerHTML = formatDate(date);
-  originWindSpeed.innerHTML = `${response.data.wind.speed}km/h`;
+  originWindSpeed.innerHTML = `${Math.round(response.data.wind.speed)}km/h`;
   originHumidity.innerHTML = `${response.data.temperature.humidity}%`;
   originDescription.innerHTML = response.data.condition.description;
   originCity.innerHTML = response.data.city;
@@ -49,6 +49,11 @@ function formatDate(date) {
 
   return `${day} ${hours}:${minutes}`;
 }
+function formatDay(timestamp) {
+  let date = new Date(timestamp * 1000);
+  let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  return days[date.getDay()];
+}
 function getForecast(city) {
   let apiKey = "a7f4435600oc7ca6bdf3abed988ftf39";
   let apiUrl = `https://api.shecodes.io/weather/v1/forecast?query=${city}&key=${apiKey}&units=metric`;
@@ -56,23 +61,29 @@ function getForecast(city) {
 }
 function showForecast(response) {
   console.log(response.data);
-  let days = ["Sun", "Mon", "Tue", "Wed", "Thu"];
+
   let forecastHtml = "";
-  days.forEach(function (day) {
-    forecastHtml =
-      forecastHtml +
-      `       
+  response.data.daily.forEach(function (day, index) {
+    if (index < 5) {
+      forecastHtml =
+        forecastHtml +
+        `       
           <div class="tiempo-forecast-day">
-            <div class="tiempo-forecast-date">${day}</div>
-            <div class="tiempo-forecast-icon">🌤</div>
+            <div class="tiempo-forecast-date">${formatDay(day.time)}</div>
+            <div class="tiempo-forecast-icon">
+            <img src="${day.condition.icon_url}" class="tiempo-forecast-icon"/>
+            </div>
             <div class="tiempo-forecast-temperatures">
               <div class="tiempo-forecast-temperature">
-                <strong>18℃</strong>
+                <strong>${Math.round(day.temperature.maximum)}°</strong>
               </div>
-              <div class="tiempo-forecast-temperature">10℃</div>
+              <div class="tiempo-forecast-temperature">${Math.round(
+                day.temperature.minimum
+              )}°</div>
             </div>
           </div>
         `;
+    }
   });
   let forecasts = document.querySelector("#forecast");
   forecasts.innerHTML = forecastHtml;
